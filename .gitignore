@@ -1,0 +1,13 @@
+runtime/
+outputs/
+work/tmp/
+node_modules/
+dist/
+target/
+__pycache__/
+*.exe
+*.sqlite*
+*.db
+*.pcap*
+.env*
+data/local-catalog.json

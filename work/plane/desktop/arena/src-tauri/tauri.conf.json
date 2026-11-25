@@ -1,0 +1,14 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "位面对战台",
+  "version": "2.0.0",
+  "identifier": "cn.ancientwar.plane.arena",
+  "build": { "frontendDist": "../dist", "devUrl": "http://127.0.0.1:5179" },
+  "app": {
+    "windows": [],
+    "security": {
+      "csp": "default-src 'self'; img-src 'self' data: asset: blob:; style-src 'self' 'unsafe-inline'; connect-src ipc: http://ipc.localhost; script-src 'self'"
+    }
+  },
+  "bundle": { "active": false, "icon": ["icons/icon.ico"] }
+}

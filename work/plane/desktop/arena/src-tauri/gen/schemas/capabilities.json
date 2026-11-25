@@ -1,0 +1,1 @@
+{"main":{"identifier":"main","description":"Local arena window: open an image and receive simulation progress.","local":true,"windows":["main"],"permissions":["dialog:allow-open","core:event:allow-listen","core:event:allow-unlisten"]}}
