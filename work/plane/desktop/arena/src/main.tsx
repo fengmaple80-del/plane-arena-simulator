@@ -15,6 +15,7 @@ import { EditSlot, Formation, missing, positionName } from "./formation"
 import { Outcome, ResultHistory, ResultImagePreview } from "./outcome"
 import { accountInput, digestExport, renderResultImage, screenshotInput } from "./edition"
 import { HeroDirectory } from "./hero-directory"
+import { Monizhan } from "./monizhan"
 import "./arena.css"
 
 const LABELS = { picking: "正在选择截图", recognizing: "正在识别阵容", reading: "正在读取阵容", simulating: "正在模拟", exporting: "正在生成结果图" }
@@ -29,6 +30,7 @@ const blankSlots = () => [1, 2, 3].flatMap(team => [1, 2].flatMap(camp =>
   }))))
 
 function Arena() {
+  const [modeTab, setModeTab] = useState<"plane" | "monizhan">("plane")
   const [source, setSource] = useState<Source>(defaultSource)
   const [mode, setMode] = useState<"auto" | "review">("auto")
   const [batchImages, setBatchImages] = useState(false)
@@ -36,6 +38,7 @@ function Arena() {
   const screenshotQueue = useRef<ScreenshotBatchHandle>(null)
   const [serial, setSerial] = useState("127.0.0.1:16448")
   const [rank, setRank] = useState("32")
+  const [scoring, setScoring] = useState(false)
   const [samples, setSamples] = useState("300")
   const [scope, setScope] = useState<number | null>(null)
   const [viewed, setViewed] = useState(1)
@@ -156,7 +159,7 @@ function Arena() {
     clearResultView(); setStage("simulating")
     setReports(items => { const next = new Map(items); next.delete(game); return next })
     setProgress({ done: 0, total: sampleCount * (game === null ? gamesIn(value).length : 1) })
-    const result = await simulate(value, game, sampleCount)
+    const result = await simulate(value, game, sampleCount, scoring)
     setReports(items => new Map(items).set(game, result))
     if (result.games.length) setHistory(items => [...items, { id: items.length + 1, label: value.label, report: result, selected: true }])
     return result
@@ -260,10 +263,16 @@ function Arena() {
   return <main className="arena-shell">
     <header className="masthead">
       <div className="brand-mark"><Swords aria-hidden="true" /></div>
-      <div><div className="brand-name">古代战争</div><h1>位面胜负预判</h1></div>
+      <div><div className="brand-name">古代战争</div><h1>{modeTab === "plane" ? "位面胜负预判" : "模拟战"}</h1></div>
       <Badge variant="outline" className="artifact-badge">神器技能 <b>10 级</b></Badge>
     </header>
 
+    <nav className="mode-switch" aria-label="战斗模式">
+      <Button variant={modeTab === "plane" ? "default" : "outline"} aria-pressed={modeTab === "plane"} onClick={() => setModeTab("plane")}>位面战</Button>
+      <Button variant={modeTab === "monizhan" ? "default" : "outline"} aria-pressed={modeTab === "monizhan"} onClick={() => setModeTab("monizhan")}>模拟战</Button>
+    </nav>
+    <Monizhan active={modeTab === "monizhan"} />
+    <div hidden={modeTab !== "plane"} className="plane-content">
     <section className="command-deck" aria-label="对局输入">
       <div className="source-row">
         <Tabs value={source} onValueChange={changeSource}>
@@ -323,6 +332,10 @@ function Arena() {
         read={async ranks => { setStage("reading"); return readAccounts(ranks, serial.trim()) }}
         calculate={value => calculate(value, null)} show={showRoster} />}
       <div className="setup-row">
+        <div className="field compact-field"><Label htmlFor="simulation-mode">模拟模式</Label><div className="select-wrap">
+          <select id="simulation-mode" value={scoring ? "score" : "win"} disabled={busy} onChange={event => {setScoring(event.target.value === "score"); clearResult()}}>
+            <option value="win">胜率预测</option><option value="score">位面打分</option>
+          </select><ChevronDown aria-hidden="true" /></div></div>
         <div className="field compact-field"><Label htmlFor="scope">模拟范围</Label><div className="select-wrap">
           <select id="scope" value={scope ?? ""} disabled={busy} onChange={event => {
             const game = event.target.value ? Number(event.target.value) : null
@@ -378,6 +391,7 @@ function Arena() {
       onClear={() => saveSlot({ ...edit, template_id: null, name: "", star: null, advancement: null })}
       onClose={() => setEdit(null)} onRestoreFocus={() => editTrigger.current?.focus()} onSave={saveSlot} />}
     {resultImage && <ResultImagePreview image={resultImage} open={previewOpen} onOpenChange={setPreviewOpen} />}
+    </div>
   </main>
 }
 

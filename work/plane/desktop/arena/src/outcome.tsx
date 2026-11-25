@@ -40,6 +40,13 @@ export function Outcome({ report, viewed, showGame, status, onExport, onPreview 
         <ImageDown aria-hidden="true" />生成结果图
       </Button>
     </div>
+    {report?.scoring && <section className="score-panel" aria-label="位面得分">
+      <h3>{report.scoring.whole ? "三局整场积分" : "单局贡献分"}</h3>
+      <p>已结算 {report.scoring.completed} / {report.scoring.samples.length} 次</p>
+      <p>左方均分 <b>{report.scoring.averages.left?.toFixed(1) ?? "—"}</b>　右方均分 <b>{report.scoring.averages.right?.toFixed(1) ?? "—"}</b></p>
+      <small>{report.scoring.whole ? "含参与分和整场胜利奖励，最高 9198 分。" : "按存活、击败、剩余生命和回合计分。参与分与胜利奖励在整场结算。"}</small>
+      <details><summary>查看每次模拟得分</summary><div className="score-scroll"><table><thead><tr><th>次数</th><th>左方</th><th>右方</th></tr></thead><tbody>{report.scoring.samples.map((sample,i)=><tr key={sample.seed} title={`种子 ${sample.seed}`}><td>{i+1}</td><td>{sample.left ?? "未结算"}</td><td>{sample.right ?? "未结算"}</td></tr>)}</tbody></table></div></details>
+    </section>}
     {game ? <><div className="game-label">第 {game.game} 小局</div><GameOutcome game={game} /></>
       : <p className="result-empty">{report ? "本小局尚未计算" : status}</p>}
     {match && <div className="overall" data-testid="match-summary">

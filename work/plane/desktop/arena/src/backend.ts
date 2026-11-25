@@ -20,7 +20,8 @@ export type GameResult = Probability & {
   game: number; samples: number; left_wins: number; right_wins: number; unknown: number
   unjudged_reasons?: Record<string, number>
 }
-export type Report = { games: GameResult[]; matches: Probability[] }
+export type Scores = { samples: {seed:number; left:number|null; right:number|null}[]; completed:number; whole:boolean; averages:{left:number|null; right:number|null} }
+export type Report = { scoring?: Scores; games: GameResult[]; matches: Probability[] }
 export type SavedResult = { id: number; label: string; report: Report; selected: boolean }
 export type Progress = { done: number; total: number }
 
@@ -29,7 +30,7 @@ export const chooseScreenshot = (multiple = false) => open({
   filters: [{ name: "截图", extensions: ["png", "jpg", "jpeg", "webp", "bmp"] }],
 })
 
-async function encodeImage(file: File) {
+export async function encodeImage(file: File) {
   if (file.size > 20 * 1024 * 1024) throw new Error("图片超过 20 MB，请裁剪到双方阵容后重新导入。")
   return new Promise<string>((resolve, reject) => {
     const reader = new FileReader()
@@ -61,12 +62,12 @@ export type AccountEntry = { rank: number; roster?: Roster; error?: string }
 export const readAccounts = (ranks: number[], serial: string) =>
   invoke<{ entries: AccountEntry[] }>("plane_request", { request: { action: "accounts", ranks, serial } })
 
-export function simulate(roster: Roster, game: number | null, samples: number) {
+export function simulate(roster: Roster, game: number | null, samples: number, scoring = false) {
   const input = roster.source === "account" ? { snapshot: roster.snapshot } : {
     slots: roster.slots.map(({ team, camp, position, template_id, star, advancement }) =>
       ({ team, camp, position, template_id, star, advancement })),
   }
-  return invoke<Report>("plane_request", { request: { action: "simulate", source: roster.source, game, samples, ...input } })
+  return invoke<Report>("plane_request", { request: { action: "simulate", source: roster.source, game, samples, scoring, ...input } })
 }
 
 export const onProgress = (callback: (value: Progress) => void) =>

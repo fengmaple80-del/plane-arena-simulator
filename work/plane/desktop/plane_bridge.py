@@ -106,6 +106,9 @@ def _accounts(request, catalog):
 
 def dispatch(request, emit=None, *, workers=None):
     action = request.get('action')
+    if action == 'monizhan':
+        from .monizhan_bridge import predict
+        return predict(request)
     if action not in ('catalog', 'recognize', 'account', 'accounts', 'simulate'):
         raise ValueError('不支持的位面操作。')
     catalog = load_current_catalog()
@@ -131,7 +134,7 @@ def dispatch(request, emit=None, *, workers=None):
         compiled = compile_image(request['slots'], catalog, game, source=request['source'])
     else:
         raise ValueError('没有可用的阵容来源。')
-    return run_prediction(compiled, samples=request['samples'], workers=workers, on_progress=emit)
+    return run_prediction(compiled, samples=request['samples'], scoring=request.get('scoring') is True, workers=workers, on_progress=emit)
 
 
 class _OutputDisconnected(Exception):

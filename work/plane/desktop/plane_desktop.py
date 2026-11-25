@@ -177,7 +177,7 @@ def summarize_prediction(compiled, rows):
     return report
 
 
-def run_prediction(compiled, samples=300, *, seed_start=DEFAULT_SEED, workers=None, on_progress=None, temp_dir=None):
+def run_prediction(compiled, samples=300, *, scoring=False, seed_start=DEFAULT_SEED, workers=None, on_progress=None, temp_dir=None):
     if type(samples) is not int or not 1 <= samples <= 3000:
         raise ValueError('每小局模拟次数应为 1 至 3000。')
     jobs = [(g['match_id'], g['game'], seed_start + i) for g in compiled['games']
@@ -213,4 +213,8 @@ def run_prediction(compiled, samples=300, *, seed_start=DEFAULT_SEED, workers=No
                     for future in futures:
                         future.cancel()
                     raise
-    return summarize_prediction(compiled, rows)
+    report = summarize_prediction(compiled, rows)
+    if scoring:
+        from desktop_scoring import summarize_scores
+        report["scoring"] = summarize_scores(rows)
+    return report

@@ -1,0 +1,41 @@
+{
+  "id": "plane-selection-live-round100over3-max9198-v3",
+  "evidence": "candidate",
+  "participation": 400,
+  "match_win": 1400,
+  "survivor": 200,
+  "enemy_defeated": 100,
+  "hp_per_game": 333,
+  "round_per_game": 333,
+  "round_penalty": 100,
+  "first_round_free": true,
+  "maximum": 9198,
+  "hp_basis": "remaining_hp_over_initial_six_max_hp_sum",
+  "hp_rounding": "floor_per_game",
+  "difficulty_multiplier": 1,
+  "confirmed_by_user": [
+    "maximum 9198 (latest correction 2026-11-15)",
+    "no opponent strength coefficient",
+    "three independent games all scored",
+    "displayed record belongs to self"
+  ],
+  "unresolved": [
+    "HP denominator beyond present examples and exact rounding boundaries",
+    "opening-only wins",
+    "kills counted from final defeated initial entrants in transformed/summoned cases"
+  ],
+  "sources": [
+    "outputs/plane-replay-20261022/当前位面规则说明.png",
+    "outputs/官方玩法规则提取-20261027/官方界面原文.md",
+    "user clarification 2026-11-15",
+    "ANOMALY_LEDGER.md PLANE-SCORE-20261115-03",
+    "work\\feasibility\\apk_textassets\\6416_WeiMianZhanJiFen.asset",
+    "user latest correction 2026-11-15: maximum 9198",
+    "outputs/battle-reports/位面战/未定区/20261115-selection-auto-01",
+    "outputs/battle-reports/位面战/未定区/20261115-selection-auto-02-after-navfix",
+    "outputs/battle-reports/位面战/未定区/20261115-selection-auto-03"
+  ],
+  "kill_coefficient_evidence": "APK table explicitly says 100; this reproduces user-corrected maximum 9198 with the other component ceilings.",
+  "round_penalty_divisor": 3,
+  "round_evidence": "Three real selection challenges on 2026-11-15: rounds 1/1/5 scored6598 twice; rounds1/3/5 scored7956. Floor (999-100*(round-1))/3 per won game."
+}

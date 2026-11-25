@@ -12,7 +12,11 @@
 
 角色目录随软件保存在 `data/plane-catalog.json`。旧版用户如有自己的 `data/local-catalog.json`，程序仍优先使用该文件。解压新版到新目录即可直接使用随包角色。
 
-角色头像随发布页的 Windows 便携包和完整源码 ZIP 提供。从 Git 克隆构建时，请先从同版本完整源码 ZIP 复制 `work/plane/desktop/arena/public/portraits` 至相同位置。游戏角色美术的权利归相应权利人。
+## 位面打分和模拟战
+
+在「位面战」的「模拟模式」选「位面打分」，填写次数并开始模拟。结果区可展开每次的分数。三个小局全部完成后，整场计算会加入参与分和三局两胜奖励。均分仅统计完成结算的样本。
+
+在「模拟战」点「自选阵容」，选择双方各六名角色及其普通或觉醒形态，再点「开始模拟战」。也可在「截图 / MuMu」粘贴或拖入一张包含双方十二个站位的开战前截图。头像随源码和便携包一起提供。游戏美术权利归相应权利人。
 
 ## 从源码构建
 
@@ -31,3 +35,5 @@ Set-Location ../../../..
 ```
 
 第三方依赖版本可以在 `package-lock.json` 和 `Cargo.lock` 查阅。分发包随附 `第三方许可` 目录和 Python 的 `LICENSE.txt`。
+
+从源码运行模拟战图片识别时，在所用 Python 环境安装 `numpy`、`opencv-python-headless` 和 `Pillow`，并将 `work/monizhan` 与 `work/plane` 加入 Python 模块搜索路径。Windows 便携包已包含这些依赖。
