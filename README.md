@@ -12,6 +12,8 @@
 
 角色目录随软件保存在 `data/plane-catalog.json`。旧版用户如有自己的 `data/local-catalog.json`，程序仍优先使用该文件。解压新版到新目录即可直接使用随包角色。
 
+角色头像随发布页的 Windows 便携包和完整源码 ZIP 提供。从 Git 克隆构建时，请先从同版本完整源码 ZIP 复制 `work/plane/desktop/arena/public/portraits` 至相同位置。游戏角色美术的权利归相应权利人。
+
 ## 从源码构建
 
 需要 Node.js 22.12+、已配置 MSVC 与 Windows SDK 的 Rust，以及 Python 3.13。将 Python 放在 PATH，或用 `PLANE_ARENA_PYTHON` 指定本机 Python 的完整路径。

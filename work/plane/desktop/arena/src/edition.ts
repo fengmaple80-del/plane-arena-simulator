@@ -3,7 +3,7 @@ import { otherSide, winRate } from "./result-presentation"
 
 export const screenshotInput: boolean = false
 export const accountInput: boolean = false
-export const builtInPortraits: boolean = false
+export const builtInPortraits: boolean = true
 export const digestExport: { label: string; render: (entries: SavedResult[]) => Promise<Blob> } | undefined = undefined
 
 export function renderResultImage(report: Report, roster: Roster): Promise<Blob> {

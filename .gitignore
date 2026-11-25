@@ -11,3 +11,5 @@ __pycache__/
 *.pcap*
 .env*
 data/local-catalog.json
+
+/work/plane/desktop/arena/public/portraits/

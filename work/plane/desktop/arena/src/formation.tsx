@@ -149,7 +149,7 @@ export function EditSlot({ slot, heroes, manual = false, onClear, onClose, onRes
             {sorted.map(entry => <div key={entry.id} id={optionId(entry.id)} role="option"
               aria-selected={entry.id === hero} data-highlighted={entry.id === active?.id}
               onMouseDown={event => event.preventDefault()} onClick={() => pick(entry.id)}>
-              <span>{entry.label}</span>{entry.id === hero && <Check aria-hidden="true" />}
+              <span className="hero-name-with-icon">{builtInPortraits && <img alt="" src={`${import.meta.env.BASE_URL}portraits/${entry.id}.webp`} />} {entry.label}</span>{entry.id === hero && <Check aria-hidden="true" />}
             </div>)}
           </div>
           {!sorted.length && <p className="hero-empty">没有匹配的角色</p>}

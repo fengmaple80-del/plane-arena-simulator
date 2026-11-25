@@ -269,3 +269,6 @@ svg { flex-shrink: 0; }
 .hero-directory table { border-collapse: separate; border-spacing: 0; width: 100%; font-variant-numeric: tabular-nums; }
 .hero-directory th, .hero-directory td { text-align: left; padding: 8px; white-space: nowrap; border-bottom: 1px solid #dce4eb; }
 .hero-directory thead th { position: sticky; top: 0; background: white; }
+
+.hero-name-with-icon { display: inline-flex; align-items: center; gap: 8px; }
+.hero-name-with-icon img { width: 30px; height: 30px; border-radius: 5px; object-fit: contain; flex: none; }

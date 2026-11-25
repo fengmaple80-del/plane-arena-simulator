@@ -65,6 +65,14 @@ try {
   assert.equal(catalog.heroes.length, 121)
   await page.getByRole("button", {name: "角色数据（121）"}).click()
   const directory = page.getByRole("dialog", {name: "角色数据"})
+  const art = directory.locator("tbody img")
+  await expect(art).toHaveCount(121)
+  const assets = await art.evaluateAll(async imgs => Promise.all(imgs.map(async img => {
+    await img.decode()
+    if (!img.naturalWidth || img.naturalHeight !== img.naturalWidth) throw Error(img.src)
+    return new URL(img.src).pathname.split("/").at(-1)
+  })))
+  assert.deepEqual(assets.sort(), catalog.heroes.map(h => `${h.id}.webp`).sort())
   await directory.getByLabel("检索角色数据").fill("龙骑")
   const dragon = directory.getByRole("row").filter({has: page.getByRole("rowheader", {name: "圣龙骑士", exact:true})})
   await expect(dragon).toBeVisible()
@@ -95,13 +103,18 @@ try {
     for (const slot of slots.filter(s => s.team === game)) {
       await cards.nth((slot.camp - 1) * 6 + slot.position).getByRole("button").click()
       await query.fill(catalog.heroes.find(hero => hero.id === slot.template_id).name)
-      await dialog.getByRole("listbox").locator(`[id$="-${slot.template_id}"]`).click()
+      const option = dialog.getByRole("listbox").locator(`[id$="-${slot.template_id}"]`)
+      await option.locator("img").evaluate(img => img.decode())
+      await option.click()
       await dialog.getByLabel("星级").fill(String(slot.star))
       await dialog.getByLabel("进阶").selectOption(String(slot.advancement))
       await dialog.getByRole("button", { name: "确认" }).click()
     }
   }
   await fillGame(1)
+  const formationImages = cards.locator(".portrait img")
+  await expect(formationImages).toHaveCount(12)
+  await formationImages.evaluateAll(imgs => Promise.all(imgs.map(img => img.decode())))
   await begin.click()
   await expect(outcome).toContainText("3 次", { timeout: 35000 })
   const one = await simulate(slots, 1)
@@ -142,7 +155,7 @@ try {
   assert.equal(artifact.subarray(0, 8).toString("hex"), "89504e470d0a1a0a")
   if (isPublic) assert.equal(artifact.readUInt32BE(16), 960)
   assert.deepEqual(errors, [])
-  console.log(JSON.stringify({ variant, catalogSize: catalog.heroes.length, singleGame: one.games[0], gamesInWholeMatch: slots.length / 12, history: 2, requestedExport: exportButton }))
+  console.log(JSON.stringify({ variant, catalogSize: catalog.heroes.length, decodedPortraits: assets.length, singleGame: one.games[0], gamesInWholeMatch: slots.length / 12, history: 2, requestedExport: exportButton }))
 } finally {
   await browser?.close().catch(() => undefined)
   if (child.exitCode === null && !startError) child.kill()
