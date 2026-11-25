@@ -113,7 +113,8 @@ def dispatch(request, emit=None, *, workers=None):
             or (action == 'simulate' and request.get('source') != 'manual')):
         raise ValueError('此版本请使用手动排阵。')
     if action == 'catalog':
-        heroes = [dict(id=tid, name=row['短命名'] or row['英雄名称'], full_name=row['英雄名称'])
+        heroes = [dict(id=tid, name=row['短命名'] or row['英雄名称'], full_name=row['英雄名称'],
+                       attributes={key: row[key] for key in ('力量', '敏捷', '智力', '体质', '韧性') if key in row})
                   for tid, row in catalog.tables['Hero'].items()
                   if 80500000 < tid < 80501000 or 80600000 < tid < 80601000]
         return dict(heroes=heroes, dataset=getattr(catalog, 'dataset_label', '本地位面角色'))

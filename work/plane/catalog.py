@@ -30,14 +30,14 @@ def load_catalog_file(path):
     digest = hashlib.sha256(raw).hexdigest()
     catalog.sources = {name: f'runtime:plane:{name}:portable:{digest}' for name in TABLES}
     catalog.tables = tables
-    catalog.dataset_label = '演示角色' if Path(path).name == 'demo-catalog.json' else '本地位面角色'
+    catalog.dataset_label = {'demo-catalog.json': '演示角色', 'plane-catalog.json': '内置位面角色'}.get(Path(path).name, '本地位面角色')
     return catalog
 
 
 def load_current_catalog(sources=None):
     """Load the selected version; explicit historical sources remain supported."""
     root = Path(__file__).resolve().parents[2]
-    for name in ('local-catalog.json', 'demo-catalog.json'):
+    for name in ('local-catalog.json', 'plane-catalog.json', 'demo-catalog.json'):
         path = root / 'data' / name
         if path.is_file():
             catalog = load_catalog_file(path)

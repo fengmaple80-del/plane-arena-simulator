@@ -1,0 +1,42 @@
+name: Windows portable ZIP
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Release tag to verify
+        required: true
+        type: string
+      sha256:
+        description: SHA-256 of the Windows ZIP
+        required: true
+        type: string
+permissions:
+  contents: read
+jobs:
+  portable:
+    runs-on: windows-2022
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Download and extract the exact release ZIP
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ inputs.tag }}
+          EXPECTED_SHA: ${{ inputs.sha256 }}
+        run: |
+          gh release download "$env:RELEASE_TAG" --repo "$env:GITHUB_REPOSITORY" --pattern '*-windows-x64.zip' --dir "$env:RUNNER_TEMP"
+          if ($LASTEXITCODE) { throw 'Release download failed' }
+          $zip = @(Get-ChildItem -LiteralPath $env:RUNNER_TEMP -Filter '*-windows-x64.zip')
+          if ($zip.Count -ne 1 -or (Get-FileHash -LiteralPath $zip[0].FullName).Hash -ne $env:EXPECTED_SHA) { throw 'ZIP checksum mismatch' }
+          Expand-Archive -LiteralPath $zip[0].FullName -DestinationPath "$env:RUNNER_TEMP/Portable Simulator"
+      - name: Install UI test driver
+        working-directory: work/plane/desktop/arena
+        run: npm ci --no-audit --no-fund
+      - name: Start Windows application and simulate one game and a whole match
+        shell: pwsh
+        run: |
+          $env:PLANE_ARENA_QA_DIR = $env:RUNNER_TEMP
+          node work/plane/desktop/arena/tests/portable-windows.mjs "$env:RUNNER_TEMP/Portable Simulator/位面对战台.exe" bundled

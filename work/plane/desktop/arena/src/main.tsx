@@ -14,6 +14,7 @@ import { ScreenshotBatch, type ScreenshotBatchHandle } from "./screenshot-batch"
 import { EditSlot, Formation, missing, positionName } from "./formation"
 import { Outcome, ResultHistory, ResultImagePreview } from "./outcome"
 import { accountInput, digestExport, renderResultImage, screenshotInput } from "./edition"
+import { HeroDirectory } from "./hero-directory"
 import "./arena.css"
 
 const LABELS = { picking: "正在选择截图", recognizing: "正在识别阵容", reading: "正在读取阵容", simulating: "正在模拟", exporting: "正在生成结果图" }
@@ -306,6 +307,7 @@ function Arena() {
           {!validRank && <p id="rank-error" className="field-pending" role="alert">名次请输入 1–32 的整数。</p>}
           {!serial.trim() && <p className="field-pending" role="alert">请输入 MuMu 地址。</p>}
         </div> : <div className="source-options manual-fields">
+          {roster?.heroes && <HeroDirectory heroes={roster.heroes} />}
           <span>点阵容格选角色，填写星级和进阶。</span>
           {!roster && !busy && <Button variant="outline" onClick={openManual}>重读角色目录</Button>}
         </div>}

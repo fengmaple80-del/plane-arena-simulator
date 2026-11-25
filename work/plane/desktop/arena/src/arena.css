@@ -264,3 +264,8 @@ svg { flex-shrink: 0; }
 .fighter-edit--fill:hover { background: #ecd3a615; }
 .fighter-edit--fill:focus-visible { outline: 2px solid #dbc387; outline-offset: -2px; }
 .history-row--view { grid-template-columns: minmax(0, 1fr) auto auto auto; }
+.hero-directory { width: min(760px, calc(100vw - 32px)); max-width: 760px; }
+.hero-data-scroll { max-height: 54vh; overflow: auto; }
+.hero-directory table { border-collapse: separate; border-spacing: 0; width: 100%; font-variant-numeric: tabular-nums; }
+.hero-directory th, .hero-directory td { text-align: left; padding: 8px; white-space: nowrap; border-bottom: 1px solid #dce4eb; }
+.hero-directory thead th { position: sticky; top: 0; background: white; }

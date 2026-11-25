@@ -3,7 +3,7 @@ import { listen } from "@tauri-apps/api/event"
 import { open } from "@tauri-apps/plugin-dialog"
 
 export type Source = "screenshot" | "account" | "manual"
-export type Hero = { id: number; name: string; full_name?: string }
+export type Hero = { id: number; name: string; full_name?: string; attributes?: Record<string, string> }
 export type Slot = {
   team: number; camp: number; position: number; template_id: number | null
   name: string; star: number | null; advancement: number | null
