@@ -15,6 +15,7 @@ import { EditSlot, Formation, missing, positionName } from "./formation"
 import { Outcome, ResultHistory, ResultImagePreview } from "./outcome"
 import { accountInput, digestExport, renderResultImage, screenshotInput } from "./edition"
 import { HeroDirectory } from "./hero-directory"
+import { UpdateButton } from "./update-button"
 import { Monizhan } from "./monizhan"
 import "./arena.css"
 
@@ -57,7 +58,9 @@ function Arena() {
   const [dragging, setDragging] = useState(false)
   const dropZone = useRef<HTMLDivElement>(null)
   const locked = useRef(false)
-  const busy = stage !== null
+  const [updating,setUpdating] = useState(false)
+  const [moniBusy,setMoniBusy] = useState(false)
+  const busy = stage !== null || updating
   const report = reports.get(scope) ?? null
   const sampleCount = Number(samples)
   const validSamples = Number.isInteger(sampleCount) && sampleCount >= 1 && sampleCount <= 3000
@@ -264,14 +267,14 @@ function Arena() {
     <header className="masthead">
       <div className="brand-mark"><Swords aria-hidden="true" /></div>
       <div><div className="brand-name">古代战争</div><h1>{modeTab === "plane" ? "位面胜负预判" : "模拟战"}</h1></div>
-      <Badge variant="outline" className="artifact-badge">神器技能 <b>10 级</b></Badge>
+      <UpdateButton busy={busy || moniBusy} lock={setUpdating} /><Badge variant="outline" className="artifact-badge">神器技能 <b>10 级</b></Badge>
     </header>
 
-    <nav className="mode-switch" aria-label="战斗模式">
+    <div inert={updating}><nav className="mode-switch" aria-label="战斗模式">
       <Button variant={modeTab === "plane" ? "default" : "outline"} aria-pressed={modeTab === "plane"} onClick={() => setModeTab("plane")}>位面战</Button>
       <Button variant={modeTab === "monizhan" ? "default" : "outline"} aria-pressed={modeTab === "monizhan"} onClick={() => setModeTab("monizhan")}>模拟战</Button>
     </nav>
-    <Monizhan active={modeTab === "monizhan"} />
+    <Monizhan onBusy={setMoniBusy} active={modeTab === "monizhan"} />
     <div hidden={modeTab !== "plane"} className="plane-content">
     <section className="command-deck" aria-label="对局输入">
       <div className="source-row">
@@ -392,7 +395,7 @@ function Arena() {
       onClose={() => setEdit(null)} onRestoreFocus={() => editTrigger.current?.focus()} onSave={saveSlot} />}
     {resultImage && <ResultImagePreview image={resultImage} open={previewOpen} onOpenChange={setPreviewOpen} />}
     </div>
-  </main>
+  </div></main>
 }
 
 createRoot(document.getElementById("root")!).render(<Arena />)

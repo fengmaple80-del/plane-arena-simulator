@@ -285,3 +285,4 @@ svg { flex-shrink: 0; }
 .moni-panel .moni-result-slot { display:flex; align-items:center; flex-wrap:wrap; gap:6px; }
 .moni-result-slot .moni-portrait { width:34px; height:34px; }
 .score-panel {padding:12px;margin:8px 0;background:var(--raised);border:1px solid var(--line);border-radius:8px}.score-panel p,.score-panel details {margin:6px 0}.score-panel b {color:var(--gold)}.score-panel summary {cursor:pointer}.score-scroll {max-height:230px;overflow:auto}.score-scroll table {width:100%;font-variant-numeric:tabular-nums;text-align:center}.score-scroll th {position:sticky;top:0;background:var(--raised)}
+.app-update{margin-left:auto;display:flex;align-items:center;gap:8px}.app-update span{font-size:12px;max-width:28em;overflow-wrap:anywhere}.app-update+.artifact-badge{margin-left:0}

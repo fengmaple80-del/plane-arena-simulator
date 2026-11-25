@@ -1,5 +1,6 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
+mod updates;
 use serde_json::Value;
 use std::{
     io::{BufRead, BufReader, Read, Write},
@@ -98,7 +99,7 @@ fn save_result_image(request: Request<'_>) -> Result<String, String> {
     if bytes.len() > 16 * 1024 * 1024 || !bytes.starts_with(b"\x89PNG\r\n\x1a\n") {
         return Err("结果图不是有效的 PNG，或超过 16 MB。".into());
     }
-    let directory = project_root()?.join("outputs/位面对战结果图");
+    let directory = updates::base(&project_root()?).join("outputs/位面对战结果图");
     let error_message = |error| format!("无法保存结果图：{error}");
     std::fs::create_dir_all(&directory).map_err(error_message)?;
     let stamp = SystemTime::now().duration_since(UNIX_EPOCH)
@@ -115,12 +116,13 @@ fn save_result_image(request: Request<'_>) -> Result<String, String> {
 }
 
 fn main() {
+    if let Ok(root)=project_root() {if updates::redirect(&root){return;}}
     tauri::Builder::default()
         .plugin(tauri_plugin_dialog::init())
-        .invoke_handler(tauri::generate_handler![plane_request, save_result_image])
+        .invoke_handler(tauri::generate_handler![plane_request, save_result_image, updates::portable_update])
         .setup(|app| {
             let root = project_root().map_err(std::io::Error::other)?;
-            let data = root.join("work/tmp/plane-arena-webview");
+            let data = updates::base(&root).join("work/tmp/plane-arena-webview");
             std::fs::create_dir_all(&data)?;
             let hidden = std::env::var_os("PLANE_ARENA_VERIFY_HIDDEN").is_some();
             WebviewWindowBuilder::new(app, "main", WebviewUrl::App("index.html".into()))
@@ -130,6 +132,7 @@ fn main() {
                 .data_directory(data)
                 .visible(!hidden)
                 .build()?;
+            updates::activate(&root)?;
             Ok(())
         })
         .run(tauri::generate_context!())
